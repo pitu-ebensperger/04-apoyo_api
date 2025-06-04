@@ -6,8 +6,17 @@
 - Run: ```sh npm run dev```
 
 
-**Endpoints** http://localhost:5001/
-- Pizzas: ../api/pizzas
+### Endpoints
+http://localhost:5001/
+
+- **Pizzas:** ../api/pizzas ```sh GET /api/pizzas```
+- **Pizza (única) :** ../api/pizzas ```sh GET /api/:id```
+- **Auth:**
+```sh
+POST /api/auth/login
+POST /api/auth/register
+```
+
 
 ## JWT
 API para consumir un servicio de Auth con JWT.
