@@ -2,6 +2,19 @@
   {
     "email": "test@test.com",
     "password": "123123",
+    "name": "test",
     "id": "UYz_2Vy9rNw7uELQ7AZ8D"
+  },
+  {
+    "email": "ttttt@mail.com",
+    "password": "tttttttttt2",
+    "name": "ttttt",
+    "id": "d6niPQhQ9--E0ykm4mXXH"
+  },
+  {
+    "email": "test@mail.com",
+    "password": "testtest",
+    "name": "test",
+    "id": "PoHJPfahqbrT0xBYkHwR1"
   }
 ]

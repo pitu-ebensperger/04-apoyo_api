@@ -23,7 +23,6 @@ const login = async (req, res) => {
     }
 
     const user = await authModel.getUserByEmail(email);
-
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
@@ -32,22 +31,21 @@ const login = async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    const payload = { email, id: user.id };
+    const payload = { email, id: user.id, name: user.name };
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    return res.json({ email, token });
+    return res.json({ email, name: user.name, token });
   } catch (error) {
-    // console.log(error);
     return res.status(500).json({ error: "Server error" });
   }
 };
 
 const register = async (req, res) => {
   try {
-    const { email = "", password = "" } = req.body;
+    const { email = "", password = "", name= "" } = req.body;
 
-    if (!email.trim() || !password.trim()) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!email.trim() || !password.trim() || !name.trim()) {
+      return res.status(400).json({ error: "Email, password and name are required" });
     }
 
     if (!isValidEmail(email)) {
@@ -64,13 +62,13 @@ const register = async (req, res) => {
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
-    const newUser = { email, password, id: nanoid() };
+    const newUser = { email, password, name, id: nanoid()};
     await authModel.addUser(newUser);
 
-    const payload = { email, id: newUser.id };
+    const payload = { email, id: newUser.id, name };
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    return res.json({ email, token });
+    return res.json({ email, name, token });
   } catch (error) {
     // console.log(error);
     return res.status(500).json({ error: "Server error" });
@@ -81,7 +79,7 @@ const me = async (req, res) => {
   try {
     const { email } = req.user;
     const user = await authModel.getUserByEmail(email);
-    return res.json({ email, id: user.id });
+    return res.json({ email, id: user.id, name: user.name });
   } catch (error) {
     // console.log(error);
     return res.status(500).json({ error: "Server error" });

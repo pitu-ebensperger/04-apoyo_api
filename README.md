@@ -1,97 +1,69 @@
 # Backend - Project Pizzería Mamma Mía
 
+Install ```sh npm install``` / Run ```sh npm run dev```
+(Change PORT in *index.js* to 5001 and check endpoints)
+
+**Database:** 
+- ../db/pizzas.json (Contiene todas las pizzas y prop id para llamar de a una)
+- ../db/users.json (Test user)
 
 
-- Install: ```sh npm install```
-- Run: ```sh npm run dev```
-
-
-### Endpoints
+## Endpoints
 http://localhost:5001/
 
-- **Pizzas:** ../api/pizzas ```sh GET /api/pizzas```
-- **Pizza (única) :** ../api/pizzas ```sh GET /api/:id```
-- **Auth:**
-```sh
-POST /api/auth/login
-POST /api/auth/register
-```
+**Pizzas** 
+- ```GET /api/pizzas``` / Obtener todas las pizzas
+- ```GET /api/pizza/:id``` / Obtener una pizza por ID
+**Autenticación** 
+- ```POST /api/auth/login``` / Iniciar sesión
+- ```POST /api/auth/register``` / Registrar nuevo usuario
+- ```GET /api/auth/me``` / Obtener el perfil del usuario autenticado (requiere JWT).
+- **Checkout** ```POST /api/checkout```  Procesar compra (requiere JWT)
 
 
 ## JWT
 API para consumir un servicio de Auth con JWT.
 
-1. Install in your backend API: ```sh npm install jsonwebtoken``` (inside your backend project folder, where your Express server code lives)
+1. Instalar ```npm install jsonwebtoken``` 
+(en carpeta de proyecto backend)
 
+2. Definir clave secreta: ```const SECRET_KEY = "tu_clave_secreta";``` 
+(en un archivo de configuración o en .env)
 
-
-
-
-## Endpoints
-
-### Pizzas
-
-```sh
-GET /api/pizzas
+3. Generar token (cuando usuario hace login o se registra)
+```sh 
+const jwt = require("jsonwebtoken");
+const token = jwt.sign({ userId: usuario.id }, SECRET_KEY, { expiresIn: "1h" });";
 ```
 
-### Pizza (única)
-
-```sh
-GET /api/pizzas/:id
-```
-
-### Auth
-
-```sh
-POST /api/auth/login
-POST /api/auth/register
-```
-
-body:
-
-```json
-{
-  "email": "test@example.com",
-  "password": "123123"
-}
-```
-
-### Checkout & Profile
-
-Esta ruta requiere un token JWT en el header, el token se obtiene en el endpoint de Auth explicado en el item siguiente (JWT).
-
-Además puedes enviar un carrito con los productos a comprar, esto es solo una simulación, no se guarda en la base de datos.
-
-```sh
-POST /api/checkouts
-```
-
-body:
-
-```json
-{
-  "cart": [...]
-}
-```
-
-Endpoint para obtener el perfil del usuario autenticado. Necesitas enviar el token JWT en el header.
-
-```sh
-GET /api/auth/me
-```
-
-## JWT
-
-Para obtener el token JWT, se debe hacer una petición a `/api/auth/login` o a `/api/auth/register` con el body correspondiente.
-
-El token JWT se debe enviar en el header `Authorization` de la siguiente manera:
-
+4. Enviar el token en los headers con cada solicitud protegida:
 ```sh
 Authorization Bearer token_jwt
 ```
+5. Protege rutas con middleware. Crea un middleware para verificar el token JWT:
+```sh
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "Token requerido" });
 
-Ejemplo con fetch:
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error: "Token inválido" });
+  }
+}
+```
+Usa este middleware en rutas protegidas:
+```sh
+app.post("/api/checkouts", authMiddleware, (req, res) => {
+  // lógica de checkout
+});
+```
+
+### Ejemplo JWT con Fetch
 
 ```js
 await fetch("http://localhost:5000/api/checkout", {
@@ -105,3 +77,25 @@ await fetch("http://localhost:5000/api/checkout", {
   }),
 });
 ```
+
+
+## Checkout & Profile
+
+### Checkout ```POST /api/checkout```
+- Requiere token JWT en el header
+- Body de la solicitud:
+```json
+{
+  "cart": [
+    {
+      "id": 1,
+      "cantidad": 2
+    },
+    ...
+  ]
+}
+```
+
+### Perfil ```POST /api/auth/me```
+- Requiere token JWT en el header
+- Devuelve la información del usuario autenticado.

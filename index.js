@@ -13,7 +13,7 @@ app.use(cors());
 
 app.use("/api/auth", authRoute);
 app.use("/api/pizzas", pizzaRoute);
-app.use("/api/checkouts", checkoutRoute);
+app.use("/api/checkout", checkoutRoute);
 app.use((_, res) => {
   res.status(404).json({ error: "Not Found" });
 });
