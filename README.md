@@ -1,34 +1,22 @@
 # Backend - Project Pizzería Mamma Mía
 
+
+
 - Install: ```sh npm install```
 - Run: ```sh npm run dev```
+
+
+**Endpoints** http://localhost:5001/
+- Pizzas: ../api/pizzas
 
 ## JWT
 API para consumir un servicio de Auth con JWT.
 
-1. Install in your backend API: 
-```sh 
-npm install jsonwebtoken
-```
- (inside your backend project folder, where your Express server code lives)
+1. Install in your backend API: ```sh npm install jsonwebtoken``` (inside your backend project folder, where your Express server code lives)
 
 
 
-# Simple API JWT
 
-API para consumir un servicio de Auth con JWT.
-
-## Instalación
-
-```sh
-npm install
-```
-
-## Uso
-
-```sh
-npm run dev
-```
 
 ## Endpoints
 
